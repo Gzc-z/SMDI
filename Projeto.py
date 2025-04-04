@@ -73,10 +73,8 @@ def selected(selec):
 
 
 
-                # decidi colocar em um json pq queria testar coisas novas :D
-                # funções para gerenciamento CRUD do sistema
+            # funções para gerenciamento CRUD do sistema
             jsonPath = "data.json"
-
             def printar():
                 if data == []:
                     print(f"{cor.red}Não há estudantes cadastrados")
@@ -103,6 +101,12 @@ def selected(selec):
                     call()
 
 
+            # verificar se arquivo existe.
+            try:
+                openFile()
+            except FileNotFoundError:
+                with open(jsonPath, "w") as file:
+                    json.dump([], file, indent=4)
 
             # match case para executar funções acima
             match choice:
@@ -118,19 +122,11 @@ def selected(selec):
                     writeFile()
 
 
-            time.sleep(.5)
+            time.sleep(.3)
             call()
         call()
 
         # == == == == == == == == == == == == == call == == == == == == == == == == == == #
-
-        # verificar se arquivo json existe.. se n... crie
-        # usando try except para tentar abrir arquivo json... se n tiver ent cria e escreve [] nele
-        try:
-            openFile()
-        except FileNotFoundError:
-            with open(jsonPath, "w") as file:
-                json.dump([], file, indent=4)
 
 
 
