@@ -1,4 +1,4 @@
-from util.cor import cor
+from util.cor import cor, fundo
 
 import json
 import time
@@ -10,27 +10,27 @@ clear()
 
 # opções para o menu principal
 options = {
-    "Saír da aplicação": 0,
-    "Estudante": 1,
-    "Disciplinas": 2,
-    "Professores": 3,
-    "Turmas": 4,
-    "Matrículas": 5,
+    1: "Estudante",
+    2: "Disciplinas",
+    3: "Professores",
+    4: "Turmas",
+    5: "Matrículas",
+    0: "Saír da aplicação"
 }
 
 # função de saida das opções + menu principal
 def title():
-    print(f"{cor.blue}<==> Menu principal <==>\n")
+    print(f"{cor.blue}<==> Menu principal <==>{cor.reset}\n")
     for i in options:
-        print(f"{cor.yellow}{options[i]} - {i}")
+        print(f"{cor.yellow}{i}. {options[i]}")
 title()
 
 
 # função para operações
 def selected(selec):
-    clear()
     # função que recebe de match case que futuramente vai verificar e inserir dados nos campos escolhidos
     def manage(aba):
+        clear()
         # print(aba)
 
         #dicionário para operações
@@ -45,7 +45,7 @@ def selected(selec):
 
         # printar menu de operações + área escolhida
         def menu2():
-            print(f"\n\n{cor.blue}--> Menu de operações: {list(options)[selec]}")
+            print(f"\n{cor.blue}--> Menu de operações: {cor.green}{cor.underline}{options[selec]}{cor.reset}")
             print(cor.pink)
             for i in operations:
                 print(f"{i} - {operations[i]}")
@@ -60,26 +60,19 @@ def selected(selec):
                 choice = int(input(f"\nselecione uma opção: "))
                 if choice not in operations:
                     clear()
-                    print(f"{cor.red}escolha outra opção!")
+                    print(f"{cor.red}selecione uma das opções!!")
                     call()
-
                 clear()
-                print(f"operação: {cor.blue}[{cor.green}{operations[choice]}{cor.blue}]\n\n")
-
+                print(f"operação: {cor.blue}[{cor.underline}{cor.green}{operations[choice]}{cor.reset}{cor.blue}]\n")
             except ValueError:
                 clear()
-                print(f"{cor.red}selecione uma das opções!!")
+                print(f"{cor.red}escolha números!")
                 call()
 
 
 
             # funções para gerenciamento CRUD do sistema
             jsonPath = "data.json"
-            def printar():
-                if data == []:
-                    print(f"{cor.red}Não há estudantes cadastrados")
-                for i in data:
-                    print(i)
 
 
             def openFile():
@@ -87,10 +80,18 @@ def selected(selec):
                     global data
                     data = json.load(file)
 
+            def readFile():
+                if data == []:
+                    print(f"{cor.bold}{cor.red}Não há estudantes cadastrados")
+                for i in data:
+                    print(f"{cor.yellow} > {i}{cor.reset}")
+                print(f"\n{cor.faint}{cor.cyan}==============================={cor.reset}")
+
+
 
             def writeFile():
                 try:
-                    newUser = input("insira seu nome: ") #posso colocar idade no futuro...
+                    newUser = input(f"{cor.blue}insira seu nome: {cor.white}") #posso colocar idade no futuro...
                     openFile()
                     data.append(newUser)
                     with open(jsonPath, "w") as file:
@@ -111,12 +112,11 @@ def selected(selec):
             # match case para executar funções acima
             match choice:
                 case 0:
-                    title()
-                    main()
+                    init()
 
                 case 1:
                     openFile()
-                    printar()
+                    readFile()
 
                 case 2:
                     writeFile()
@@ -136,27 +136,38 @@ def selected(selec):
             print("\nVocê fechou o aplicativo :(")
             exit(0)
 
-        case _:
+        case 1:
             manage(selec)
+
+        case 2 | 3 | 4 | 5:
+            clear()
+            print(f"{cor.red}EM DESENVOLVIMENTO")
+            init()
 
 
 # função para iniciar o código e verificar opções :P
 # se der ValueError além de n executar o resto do código vai tmb reiniciar mostrar saida except ValueError e perguntar dnv
 # se tiver interrupção do teclado com ctrl + c vai mostrar que fechou o sistema e tmb vai forçar sair sem nenhum erro
 # se escolher um número entre as opções ent vai executar o resto do código
+def init():
+    title()
+    main()
+
 def main():
     while True:
         try:
             print(cor.lightblue)
-            opt = int(input("\nSua opção: "))
+            opt = int(input(f"\nSua opção: {cor.white}"))
             if opt > -1 and opt <= len(options) - 1:
                 selected(opt)
                 break
-            print("Selecione outra opção :P")
+            clear()
+            print(f"{cor.red}Selecione outra opção :P\n")
+            init()
 
         except ValueError:
             clear()
-            print(f"\n{cor.red}Tente números!!")
+            print(f"\n{cor.red}Tente números!!\n")
             title()
 
         except KeyboardInterrupt:
