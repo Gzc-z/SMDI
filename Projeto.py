@@ -8,7 +8,7 @@ def clear():
     print("\n" * 30)
 clear()
 
-# aqui podemos colocar mais opções se quiser
+# opções para o menu principal
 options = {
     "Saír da aplicação": 0,
     "Estudante": 1,
@@ -29,6 +29,7 @@ title()
 # função para operações
 def selected(selec):
     clear()
+    # função que recebe de match case que futuramente vai verificar e inserir dados nos campos escolhidos
     def manage(aba):
         # print(aba)
 
@@ -42,7 +43,7 @@ def selected(selec):
         }
 
 
-        # printar menu de operações e áreas de disciplinas como: estudante ou turma
+        # printar menu de operações + área escolhida
         def menu2():
             print(f"\n\n{cor.blue}--> Menu de operações: {list(options)[selec]}")
             print(cor.pink)
@@ -65,68 +66,72 @@ def selected(selec):
                 clear()
                 print(f"operação: {cor.blue}[{cor.green}{operations[choice]}{cor.blue}]\n\n")
 
-
-
-
-                #decidi colocar em um json pq queria testar coisas novas :D
-                def printar():
-                    if data == []:
-                        print(f"{cor.red}Não há estudantes cadastrados")
-                    for i in data:
-                        print(i)
-
-
-                jsonPath = "data.json"
-                def openFile():
-                    with open(jsonPath, "r") as file:
-                        global data
-                        data = json.load(file)
-
-
-                def writeFile():
-                    try:
-                        newUser = input("insira seu nome: ") #posso colocar idade no futuro...
-                        openFile()
-                        data.append(newUser)
-                        with open(jsonPath, "w") as file:
-                            json.dump(data, file, indent=4)
-
-                    except ValueError:
-                        print(f"{cor.red}esse não é seu nome :[")
-                        call()
-
-
-                # verificar se arquivo json existe.. se n... crie
-
-                match choice:
-                    case 0:
-                        title()
-                        main()
-
-                    case 1:
-                        openFile()
-                        printar()
-
-                    case 2:
-                        writeFile()
-
-
-                time.sleep(1) # colocar sleep em todos os cases de match case..
-                call()
             except ValueError:
                 clear()
                 print(f"{cor.red}selecione uma das opções!!")
                 call()
+
+
+
+                # decidi colocar em um json pq queria testar coisas novas :D
+                # funções para gerenciamento CRUD do sistema
+            jsonPath = "data.json"
+
+            def printar():
+                if data == []:
+                    print(f"{cor.red}Não há estudantes cadastrados")
+                for i in data:
+                    print(i)
+
+
+            def openFile():
+                with open(jsonPath, "r") as file:
+                    global data
+                    data = json.load(file)
+
+
+            def writeFile():
+                try:
+                    newUser = input("insira seu nome: ") #posso colocar idade no futuro...
+                    openFile()
+                    data.append(newUser)
+                    with open(jsonPath, "w") as file:
+                        json.dump(data, file, indent=4)
+
+                except ValueError:
+                    print(f"{cor.red}esse não é seu nome :[")
+                    call()
+
+
+
+            # match case para executar funções acima
+            match choice:
+                case 0:
+                    title()
+                    main()
+
+                case 1:
+                    openFile()
+                    printar()
+
+                case 2:
+                    writeFile()
+
+
+            time.sleep(.5)
+            call()
         call()
 
         # == == == == == == == == == == == == == call == == == == == == == == == == == == #
 
+        # verificar se arquivo json existe.. se n... crie
         # usando try except para tentar abrir arquivo json... se n tiver ent cria e escreve [] nele
         try:
             openFile()
         except FileNotFoundError:
             with open(jsonPath, "w") as file:
                 json.dump([], file, indent=4)
+
 
 
     # estrutura de switch case, ou melhor, match case para python, pq achei mais simples
@@ -140,6 +145,9 @@ def selected(selec):
 
 
 # função para iniciar o código e verificar opções :P
+# se der ValueError além de n executar o resto do código vai tmb reiniciar mostrar saida except ValueError e perguntar dnv
+# se tiver interrupção do teclado com ctrl + c vai mostrar que fechou o sistema e tmb vai forçar sair sem nenhum erro
+# se escolher um número entre as opções ent vai executar o resto do código
 def main():
     while True:
         try:
