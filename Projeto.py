@@ -8,6 +8,7 @@ import random
 import os
 import shutil
 
+
 # classe para cores de texto
 class cor:
     black = '\033[30m'
@@ -80,13 +81,14 @@ def selected(selec):
             2: "Adicionar",
             3: "Atualizar",
             4: "Excluir",
+            5: "procurar",
             0: "Menu principal"
         }
 
 
         # printar menu de operações + área escolhida
         def menu2():
-            print(f"\n{cor.blue}--> Menu de operações: {cor.green}{cor.underline}{options[selec]}{cor.reset}")
+            print(f"{cor.blue}--> Menu de operações: {cor.green}{cor.underline}{options[selec]}{cor.reset}")
             print(cor.pink)
             for i in operations:
                 print(f"{i} - {operations[i]}")
@@ -111,7 +113,6 @@ def selected(selec):
                 call()
 
 
-
             # funções para gerenciamento CRUD do sistema
             jsonPath = "data.json"
 
@@ -119,7 +120,6 @@ def selected(selec):
             def sendData(dado):
                 with open(jsonPath, "w", encoding="utf-8") as file:
                     json.dump(dado, file, indent=4)
-
 
             # abrir arquivo para gerenciar
             # verificar se arquivo existe.
@@ -141,7 +141,7 @@ def selected(selec):
                     shutil.copy("data.json", backup)
                     clear()
                     print(f"{cor.red}erro: {e}{cor.cyan}\nbackup feito em {backup}{cor.reset}")
-                    os.remove("data.json")
+                    sendData([])
                     exit(1)
 
 
@@ -149,14 +149,16 @@ def selected(selec):
             def readFile():
                 openFile()
                 if data == []:
-                    print(f"{cor.bold}{cor.red}Não há estudantes inseridos")
+                    print(f"{cor.bold}{cor.red}{data}")
+                print(cor.faint, end="")
                 print("-> {0:<3}|{1:^6}|{2:>4}".format("id","nome","cpf"))
+                print(cor.reset, end="")
                 print(cor.yellow)
                 for i in data:
                     items = list(i.values())
-                    print("> {0:<4}{1}\t {2}".format(items[0], items[1], items[2]))
+                    print("> {0:<4} {1}\t{2}".format(items[0], items[1], items[2]))
                 print(cor.reset)
-                print(f"\n{cor.faint}{cor.cyan}==============================={cor.reset}")
+                print(f"{cor.faint}{cor.cyan}==============================={cor.reset}\n")
 
 
 
@@ -165,7 +167,7 @@ def selected(selec):
             def writeFile():
                 try:
                     nome = input(f"{cor.blue}insira seu nome: {cor.white}")
-                    cpf = int(input(f"{cor.blue}insira o CPF do estudante: {cor.white}"))
+                    cpf = int(input(f"{cor.blue}insira o CPF do estudante ({cor.green}{cor.underline}apenas números{cor.reset}{cor.blue}): {cor.white}"))
 
                     openFile()
                     codigo = len(data)
@@ -215,7 +217,18 @@ def selected(selec):
                 except ValueError:
                     print(f"\n{cor.red}coloque corretamente as informações")
 
-
+            def searchInfo():
+                info = input(f"id, nome ou cpf: {cor.white}")
+                openFile()
+                for i in data: # poderia usar 2 for, mas dae teria que fazer a mesma coisa em readFile :|
+                    pid = i["id"]
+                    nome = i["nome"]
+                    cpf = i["cpf"]
+                    if info in str((pid, nome, cpf)):
+                        print(f"\n{cor.yellow}> {pid} {nome} {cpf}{cor.reset}\n")
+                        break
+                    print(f"\n{cor.lightred}não foi possivel encontrar o estudante\n") #aqui também posso colocar!!
+                    break
 
             # match case para executar funções acima
             # no futuro posso fazer para mandar um valor para info da área.. ex: 1: estudante 2: disciplina, para verificar em qual array colocar as informações
@@ -234,8 +247,9 @@ def selected(selec):
 
                 case 4:
                     excludeInfo()
+
                 case 5:
-                    openFile()
+                    searchInfo()
 
             call()
         call()
@@ -255,7 +269,6 @@ def selected(selec):
             print(f"{cor.red}EM DESENVOLVIMENTO")
             init()
 
-
 # função de inicialização.. para mostrar o titulo (menu principal) e o primeiro menu
 def init():
     title()
@@ -266,18 +279,17 @@ def init():
 # se tiver interrupção do teclado com ctrl + c ou ctrl + d mostra que fechou o sistema e forçar saida sem erro
 def main():
     try:
-        print(cor.lightblue)
-        opt = int(input(f"\nSua opção: {cor.white}"))
+        opt = int(input(f"\n\n{cor.lightblue}Sua opção: {cor.white}"))
         if opt > -1 and opt <= len(options) - 1:
             selected(opt)
         clear()
         print(f"{cor.red}Selecione outra opção :P\n")
         init()
 
-    except ValueError as e:
+    except ValueError:
         clear()
-        print(f"\n{cor.red}Tente números!!\n", e)
-        title()
+        print(f"{cor.red}Tente números!!\n")
+        init()
 
     except (KeyboardInterrupt, EOFError):
         print("\nVocê fechou o aplicativo :(")
