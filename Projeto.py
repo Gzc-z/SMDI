@@ -38,14 +38,13 @@ class cor:
     invert = '\033[;7m'
     reset = '\033[0;0m'
 
-
-# função para limpar o terminal/console :D
+# função para limpar o terminal/console dependendo do SO :D
 def clear():
     os.system('cls' if os.name == 'nt' else'clear')
 clear()
 
-# dict para opções para o menu principal
-def options():
+# dict para opções para o menu principal + função de saida das opções + menu principal
+def title():
     global options
     options = {
         1: "Estudante",
@@ -55,50 +54,33 @@ def options():
         5: "Matrículas",
         0: "Saír da aplicação"
     }
-options()
 
-# função de saida das opções + menu principal
-def title():
     print(f"{cor.blue}<==> Menu principal <==>{cor.reset}\n")
     for i in options:
         print(f"{cor.yellow}{i}. {options[i]}")
 
-title()
-
-
 def selected(selec):
-    # função manage() que recebe para verificar qual área escolhida
-    # ex: estudante, turmas, professores, matrículas
-    # futuramente vai ler qual opção escolhida e interpretar em uma lista diferente as opções adicionadas
-    # ex: adicionar em professores vai adicionar em uma lista diferente de adicionar em aluno
     def manage(aba):
         clear()
+
         # print(aba)
 
-        #dicionário para operações
-        operations = {
-            1: "Listar",
-            2: "Adicionar",
-            3: "Atualizar",
-            4: "Excluir",
-            5: "procurar",
-            0: "Menu principal"
-        }
-
-
-        # printar menu de operações + área escolhida
-        def menu2():
-            print(f"{cor.blue}--> Menu de operações: {cor.green}{cor.underline}{options[selec]}{cor.reset}")
-            print(cor.pink)
-            for i in operations:
-                print(f"{i} - {operations[i]}")
-
-
-        # função para selecionar opção para gerenciamento
+        # printar menu de operações + área escolhida + função para selecionar opção para gerenciamento
         def call():
-            # try case para escolher opção do segundo menu
             try:
-                menu2()
+                # dicionário para operações
+                operations = {
+                    1: "Listar",
+                    2: "Adicionar",
+                    3: "Atualizar",
+                    4: "Excluir",
+                    5: "procurar",
+                    0: "Menu principal"
+                }
+
+                print(f"{cor.blue}--> Menu de operações: {cor.green}{cor.underline}{options[selec]}{cor.reset}\n")
+                for i in operations:
+                    print(f"{cor.pink}{i} - {operations[i]}")
                 print(cor.blue)
                 choice = int(input(f"\nselecione uma opção: {cor.white}"))
                 if choice not in operations:
@@ -121,10 +103,8 @@ def selected(selec):
                 with open(jsonPath, "w", encoding="utf-8") as file:
                     json.dump(dado, file, indent=4)
 
-            # abrir arquivo para gerenciar
-            # verificar se arquivo existe.
-            # se não, ent crie um e escreva [] nele
-            # se o arquivo for alterado por fora, de um jeito fora da sintaxe, então ele gera um arquivo de backup(do erro), coloca em backups e apaga o json atual
+            # abrir arquivo para gerenciar + verificar se arquivo existe. + se não, ent crie um e escreva [] nele
+            # se o arquivo for alterado por fora, de um jeito fora da sintaxe, então ele gera um arquivo de backup(do erro), coloca em backups e reescreve o json atual
             def openFile():
                 try:
                     with open(jsonPath, "r") as file:
@@ -137,7 +117,7 @@ def selected(selec):
                     #usei um numero 'aleatório' pq fiquei com preguiça de usar datetime
                     log = random.randint(100, 1000000)
                     os.makedirs("backups", exist_ok=True)
-                    backup = f"backups/backupError_{log}.json"
+                    backup = f"backups/backupError_{log}.json" # seria interessante ver o histórico de mudanças que houve no arquivo.. tipo undo do vim
                     shutil.copy("data.json", backup)
                     clear()
                     print(f"{cor.red}erro: {e}{cor.cyan}\nbackup feito em {backup}{cor.reset}")
@@ -234,7 +214,7 @@ def selected(selec):
             # no futuro posso fazer para mandar um valor para info da área.. ex: 1: estudante 2: disciplina, para verificar em qual array colocar as informações
             match choice:
                 case 0:
-                    init()
+                    main()
 
                 case 1:
                     readFile()
@@ -266,30 +246,26 @@ def selected(selec):
 
         case 2 | 3 | 4 | 5:
             clear()
-            print(f"{cor.red}EM DESENVOLVIMENTO")
-            init()
-
-# função de inicialização.. para mostrar o titulo (menu principal) e o primeiro menu
-def init():
-    title()
-    main()
+            print(f"{cor.red}EM DESENVOLVIMENTO\n")
+            main()
 
 # função para iniciar o código e verificar opções :P
 # vai dar ValueError se n selecionar uma opção listada. e o código vai reiniciar
 # se tiver interrupção do teclado com ctrl + c ou ctrl + d mostra que fechou o sistema e forçar saida sem erro
 def main():
     try:
+        title()
         opt = int(input(f"\n\n{cor.lightblue}Sua opção: {cor.white}"))
         if opt > -1 and opt <= len(options) - 1:
             selected(opt)
         clear()
         print(f"{cor.red}Selecione outra opção :P\n")
-        init()
+        main()
 
     except ValueError:
         clear()
         print(f"{cor.red}Tente números!!\n")
-        init()
+        main()
 
     except (KeyboardInterrupt, EOFError):
         print("\nVocê fechou o aplicativo :(")
