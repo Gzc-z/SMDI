@@ -121,6 +121,8 @@ def selected(selec):
                     with open(jsonPath, "r") as file:
                         global data
                         data = json.load(file)
+                        global non
+                        non = ""
                 except FileNotFoundError:
                     sendData([[],[],[],[],[]])
                     openFile()
@@ -148,15 +150,12 @@ def selected(selec):
                 print("-> {0:<3}|{1:^8}|{2:>4}".format("id","nome","cpf"))
                 print(cor.reset, end="")
                 print(cor.yellow)
-                lenName = []
-                for i in data:
-                    lenName.append(len(i["nome"]))
-                maxName =  max(lenName)
                 for i in data:
                     itens = list(i.values())
                     conta = 45 - len(i["nome"])
-                    non = ""
-                    print(f"{cor.yellow}> {itens[0]:<4}{itens[1]}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{itens[2]}")
+                    cpf = str(itens[2])
+                    viewCpf = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}"
+                    print(f"{cor.yellow}> {itens[0]:<4}{itens[1]}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{viewCpf}")
                 print(cor.reset)
                 print(f"{cor.faint}{cor.cyan}{" end of list ":-^62}{cor.reset}\n")
 
@@ -238,15 +237,20 @@ def selected(selec):
                     print(f"{cor.red}escolha um valor válido")
 
             def searchInfo():
-                info = input(f"procurar por: {cor.white}")
+                info = input(f"pesquisar por: {cor.white}")
                 openFile()
                 dataRedirect()
-                for i in data: # poderia usar 2 for, mas dae teria que fazer a mesma coisa em readFile :|
+                print("")
+                for i in data:
                     pid = i["id"]
                     nome = i["nome"]
                     cpf = i["cpf"]
+                    conta = 45 - len(i["nome"])
                     if info in str((pid, nome, cpf)):
-                        print(f"{cor.yellow}> {pid} {nome} {cpf}{cor.reset}")
+                        cpf = str(cpf)
+                        viewCpf = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}"
+                        print(f"{cor.yellow}> {pid:<4}{nome}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{viewCpf}")
+                print("")
 
             # match case para executar funções acima
             # no futuro posso fazer para mandar um valor para info da área.. ex: 1: estudante 2: disciplina, para verificar em qual array colocar as informações
@@ -313,8 +317,8 @@ def main():
     except SystemExit:
         raise
 
-    except Exception as e:
-        print(f"\nOcorreu um erro inesperado :[ entre em contato conosco\n\n{cor.red}erro: ", e, cor.reset)
-        exit(0)
+    # except Exception as e:
+    #     print(f"\nOcorreu um erro inesperado :[ entre em contato conosco\n\n{cor.red}erro: ", e, cor.reset)
+    #     exit(0)
 
 main()
