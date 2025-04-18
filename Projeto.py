@@ -7,7 +7,7 @@ import json
 import random
 import os
 import shutil
-import time
+import datetime
 
 
 # classe para cores de texto
@@ -103,31 +103,29 @@ def selected(selec):
                 with open(jsonPath, "w", encoding="utf-8") as file:
                     json.dump(dado, file, indent=4)
 
-            # abrir arquivo para gerenciar + verificar se arquivo existe. + se não, ent crie um e escreva [] nele
             # se o arquivo for alterado por fora, de um jeito fora da sintaxe, então ele gera um arquivo de backup(do erro), coloca em backups e reescreve o json atual
-            #usei um numero 'aleatório' pq fiquei com preguiça de usar datetime
             def bkup(e):
-                log = random.randint(100, 1000000)
+                log = datetime.datetime.now().strftime("%d%m%y_%X")
                 os.makedirs("backups", exist_ok=True)
-                backup = f"backups/backupError_{log}.json" # seria interessante ver o histórico de mudanças que houve no arquivo.. tipo undo do vim
+                backup = f"backups/backupError_{log}.json"
                 shutil.copy("data.json", backup)
                 clear()
                 print(f"{cor.red}erro: {e}{cor.cyan}\nbackup feito em {backup}{cor.red}")
                 sendData([[],[],[],[],[]])
                 exit(1)
 
+            # abrir arquivo para gerenciar + verificar se arquivo existe. + se não, ent crie um e escreva [[],[]] nele
             def openFile():
                 try:
                     with open(jsonPath, "r") as file:
                         global data
                         data = json.load(file)
-                        global non
-                        non = ""
                 except FileNotFoundError:
                     sendData([[],[],[],[],[]])
                     openFile()
                 except json.JSONDecodeError as e:
                     bkup(e)
+
 
             # apenas transformanda data de: [[n1],[n2]...] para [nx]
             def dataRedirect():
@@ -140,6 +138,7 @@ def selected(selec):
 
             # ler os dados do arquivo, futuramente vou adicionar uma array para diferentes listas das opções do menu
             # eu poderia fzr mais simples.. porém eu não teria mais controle do espaçamento entre os elementos ent deixei assim mesmo
+            non = ""
             def readFile():
                 openFile()
                 dataRedirect()
