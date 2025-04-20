@@ -13,7 +13,7 @@ a simple program that uses python :D
 to run the program use `python Projeto.py` which will show the main menu with the options:
 
 ### main menu:
-![main page](https://private-user-images.githubusercontent.com/151116114/434976587-ecb6b9b8-b57e-4c0d-abe8-8f3fc5e72861.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQ5MjY4NjgsIm5iZiI6MTc0NDkyNjU2OCwicGF0aCI6Ii8xNTExMTYxMTQvNDM0OTc2NTg3LWVjYjZiOWI4LWI1N2UtNGMwZC1hYmU4LThmM2ZjNWU3Mjg2MS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNDE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDQxN1QyMTQ5MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT04ZDYwM2NmMzVkNzVjYTJlMTAxMDMyMDBlY2QyNWYyODUzNTgwMzhlZWYxNTIxMjcyZGU2MzU3NjgxYTk4YzBiJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.zyaHbDzMwhFye2eHRx3bEdpqJR2uXdRyhy0unBLEPyI)
+![󰍜 main page](images/main-menu.png)
 * `student`
 * `disciplines`
 * `professors`
@@ -22,7 +22,7 @@ to run the program use `python Projeto.py` which will show the main menu with th
 * `leave` (exit of applicaton)
 
 ### operation menu:
-![operation page](https://private-user-images.githubusercontent.com/151116114/434982410-4b8e7e81-f035-488b-bef8-03f5ac7e4997.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQ5MjY4NjgsIm5iZiI6MTc0NDkyNjU2OCwicGF0aCI6Ii8xNTExMTYxMTQvNDM0OTgyNDEwLTRiOGU3ZTgxLWYwMzUtNDg4Yi1iZWY4LTAzZjVhYzdlNDk5Ny5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNDE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDQxN1QyMTQ5MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1iNTI2NDBkZjBhZTA5YzYwYTJmM2E4ZGQ4OTJlM2Y2ZDAyMzU4YjU3NWE4N2U5ZmRjM2IyNTAxZDU5NWNkMjgyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.i5MqxxjLXa00G6w9dZ1o6dOIJrvjLhzxnv7-Uiso6Rc)
+![↳ operation page](images/operation.png)
 * `list` (list the registered data)
 * `add` (add data to data.json file)
 * `update` (update the selected data in json)
@@ -30,5 +30,5 @@ to run the program use `python Projeto.py` which will show the main menu with th
 * `search` (search registered info)
 * `main` menu (back to main menu)
 
-![operations](https://private-user-images.githubusercontent.com/151116114/434982409-6ac049d3-ad45-4589-a468-6764f6b3e8b2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDQ5MjY4NjgsIm5iZiI6MTc0NDkyNjU2OCwicGF0aCI6Ii8xNTExMTYxMTQvNDM0OTgyNDA5LTZhYzA0OWQzLWFkNDUtNDU4OS1hNDY4LTY3NjRmNmIzZThiMi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNDE3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDQxN1QyMTQ5MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lNDRlOTQ0MzA0YzA4NGNiODcyNTQyOWZmY2E2MTU4ZTZhOWU2YTAzZTJmNmZhMWJhZjc3YThiYTM2NTZiZDc3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.NMSMcUmuD77CAb-7kYKQsdWj36HoJZZ6nEJUvmYqylA)
+![operations](images/operations.png)
 ---
