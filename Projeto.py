@@ -1,6 +1,8 @@
 # Gabriel Zaiac
 # Superior em tecnologia de análise e desenvolvimento de sistemas
-# fiz esse programinha para ser executado em terminal  (espeficicamente linux), não me responsabiliso por não funcionamento em outros  lugares ou plataformas (como IDE's)
+# fiz esse programinha para ser executado em terminal  (espeficicamente linux), não me responsabiliso por não funcionamento em outros ambientes ;-;
+
+# não leia o código :[
 
 # importações :D
 import json

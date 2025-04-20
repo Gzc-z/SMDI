@@ -3,8 +3,6 @@ a simple program that uses python :D
 
 ## Index:
 * [The system](#-system)
-* 
-* 
 
 ---
 
