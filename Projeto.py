@@ -38,6 +38,7 @@ class cor:
     end = "\033[0m"
     invert = '\033[;7m'
     reset = '\033[0;0m'
+    reyellow = '\033[0;0m\033[93m'
 
 # função para limpar o terminal/console dependendo do SO :D
 def clear():
@@ -49,8 +50,8 @@ def title():
     global options
     options = {
         1: "Estudante",
-        2: "Disciplinas",
-        3: "Professores",
+        2: "Professor",
+        3: "Disciplinas",
         4: "Turmas",
         5: "Matrículas",
         0: "Saír da aplicação"
@@ -103,7 +104,7 @@ def selected(selec):
                 with open(jsonPath, "w", encoding="utf-8") as file:
                     json.dump(dado, file, indent=4)
 
-            # se o arquivo for alterado por fora, de um jeito fora da sintaxe, então ele gera um arquivo de backup(do erro), coloca em backups e reescreve o json atual
+            # verificar se arquivo existe e criar um backup (do arquivo atual) se estiver com erro de sintaxe resscrevendo o arquivo atual
             def bkup(e):
                 log = datetime.datetime.now().strftime("%d%m%y_%X")
                 os.makedirs("backups", exist_ok=True)
@@ -114,7 +115,7 @@ def selected(selec):
                 sendData([[],[],[],[],[]])
                 exit(1)
 
-            # abrir arquivo para gerenciar + verificar se arquivo existe. + se não, ent crie um e escreva [[],[]] nele
+            # função para abrir o arquivo e escrevendo as informações em data. escrever [[],[]] se n existir
             def openFile():
                 try:
                     with open(jsonPath, "r") as file:
@@ -135,85 +136,140 @@ def selected(selec):
                 except IndexError as e:
                     bkup(e)
 
+            # função de input de informações. Usada por write e update
+            def groupInput(send) -> dict:
+                def verify():
+                    if data:
+                        for i in data:
+                            if aba in (0, 1):
+                                if codigo == i["id"]:                                           # vou mexer aqui depois verificação para ver se o id ja existe
+                                    raise ValueError(f"O id já existe")
+                            if aba == 2:
+                                if idDisciplina == i["codigo"]:
+                                    raise ValueError(f"O id já existe")
+                try:
+                    match aba:
+                        case 0 | 1:
+                            codigo = input(f"{cor.blue}digite o código do {options[aba + 1]} (max: 5): {cor.white}")[:5]
+                            codigo = int(codigo)
+                            nome = input(f"{cor.blue}insira o nome do {options[aba + 1]} (max. 45): {cor.white}")[:45].title()
+                            cpf = int(input(f"{cor.blue}insira o CPF do {options[aba + 1]} (apenas números{cor.reset}{cor.blue}): {cor.white}"))
+                            cpf = str(cpf)
+                            if len(cpf) != 11:
+                                clear()
+                                print(f"{cor.red}cpf inválido: cpf apenas 11 digitos{cor.reset}")
+                                call()
+                            info = {"id": codigo, "nome": nome, "cpf": cpf}
 
-            # ler os dados do arquivo, futuramente vou adicionar uma array para diferentes listas das opções do menu
-            # eu poderia fzr mais simples.. porém eu não teria mais controle do espaçamento entre os elementos ent deixei assim mesmo
+                        case 2:
+                            idDisciplina = int(input(f"{cor.blue}Informe o código da disciplina (max: 6): {cor.white}"))
+                            nomeDisciplina = input(f"{cor.blue}Nome da disciplina: {cor.white}")
+                            info = {"codigo": int(str(idDisciplina)[:6]), "disciplina": nomeDisciplina}
+
+                        case 3:
+                            idClass = int(input(f"{cor.blue}código da turma: {cor.white}"))
+                            idProf = int(input(f"{cor.blue}código do professor: {cor.white}"))
+                            idDisciplina = int(input(f"{cor.blue}Informe o código da disciplina: {cor.white}"))
+                            info = {"idTurma": idClass, "idProf": idProf, "idDisciplina": idDisciplina}
+
+                        case 4:
+                            idClass = int(input(f"{cor.blue}código da turma: {cor.white}"))
+                            idEstudante = int(input(f"{cor.blue}código do estudante: {cor.white}"))
+                            info = {"idTurma": idClass, "idEstudante": idEstudante}
+
+                    # if recebido de write para verificar os ids :D
+                    if send == None:
+                        verify()
+                    return info
+                except ValueError as e:
+                    clear()
+                    print(f"{cor.red}informações inválidas :[\n{cor.red}{e}")
+                    call()
+
+
+            # ler os dados do json
+            # misericórdia
             non = ""
             def readFile():
                 openFile()
-                dataRedirect()
-                if data == []:
+                if data[aba] == []:
                     print(f"{cor.bold}{cor.red}lista vazia\n")
                     call()
-                print(cor.faint, end="")
-                print("-> {0:<3}|{1:^8}|{2:>4}".format("id","nome","cpf"))
-                print(cor.reset, end="")
-                print(cor.yellow)
-                for i in data:
-                    itens = list(i.values())
-                    conta = 45 - len(i["nome"])
-                    cpf = str(itens[2])
-                    viewCpf = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}"
-                    print(f"{cor.yellow}> {itens[0]:<4}{itens[1]}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{viewCpf}")
+                dataRedirect()
+                match aba:
+                    case 1 | 0:
+                        print(cor.faint, "-> {0:<3}|{1:^8}|{2:>4}".format("id","nome","cpf"), end=f"\n\n{cor.yellow}")
+                        for i in data:
+                            cpf = i["cpf"]
+                            viewCpf = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}"
+                            conta = 45 - len(i["nome"])
+                            print(f"{cor.reset}{cor.yellow}> {i["id"]:<6}{i["nome"]}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{viewCpf}")
+                    case 2:
+                        print(cor.faint, f"-> código -- disciplina{cor.reset}\n")
+                        for i in data:
+                            print(f"{cor.yellow}>", i["codigo"], f"{cor.faint}{'':.>{13 - len(str(i['codigo']))}}{cor.reyellow}{i['disciplina']}")
+
+                    case 3:
+                        print(cor.faint, f"códigos: -> turma | professor | disciplina{cor.reset}\n")
+                        for i in data:
+                            print(f"{cor.yellow}> {cor.faint}turma:{cor.reyellow}{i['idTurma']:<8} {cor.faint}professor:{cor.reyellow}{i['idProf']:<8} {cor.faint}disciplina:{cor.reyellow}{i['idDisciplina']:<8}")
+
+                    case 4:
+                        print(cor.faint, f"códigos: -> turma | estudante{cor.reset}\n")
+                        for i in data:
+                            print(f"{cor.yellow}> {cor.faint}turma: {cor.reyellow}{i['idTurma']:<10}{cor.faint}estudante: {cor.reyellow}{i['idEstudante']}")
+
                 print(cor.reset)
                 print(f"{cor.faint}{cor.cyan}{" end of list ":-^62}{cor.reset}\n")
 
             # função para inserir info no arquivo json
-            # eu fiz para que o id sempre fosse maior que o ultimo id da lista, e mesmo se apagar qualquer valor o id vai ser diferente
             def writeFile():
-                try:
-                    nome = input(f"{cor.blue}insira seu nome (max. 45): {cor.white}")[:45].lower()
-                    cpf = int(input(f"{cor.blue}insira o CPF do estudante ({cor.green}{cor.underline}apenas números{cor.reset}{cor.blue}): {cor.white}"))
-                    if len(str(cpf)) != 11:
-                        clear()
-                        print(f"{cor.red}cpf inválido: 11 digitos{cor.reset}")
-                        call()
-                    clear()
-                    print(f"{cor.green}adicionado!")
-                    openFile()
-                    dataRedirect()
-                    codigo = len(data)
-                    if data:
-                        codigo -= 1
-                        pid = data[codigo]["id"]
-                        codigo = pid + 1
-                    info = {"id": codigo, "nome": nome, "cpf": cpf}
-                    openFile()
-                    data[aba].append(info)
-                    sendData(data)
-                except ValueError:
-                    print(f"{cor.red}informações inválidas :[")
-                    call()
+                openFile()
+                dataRedirect()
+                info = groupInput(None)
+
+                openFile()
+                data[aba].append(info)
+                sendData(data)
+                print(f"\n{cor.green}adicionado!")
 
             # função para atualizar lista do json :|
+            # verifica no meio da função se ja existe um id desse tipo                   # acho q talvez eu mexa aqui também
             def updateInfo():
                 try:
                     readFile()
-                    update = int(input(f"{cor.blue}digite o id de quem deseja alterar: {cor.white}"))
                     openFile()
                     dataRedirect()
+                    update = int(input(f"{cor.blue}digite o id que deseja alterar (primeiro id): {cor.white}"))
                     for i in range(len(data)):
-                        if update == data[i]["id"]:
-                            newName = input(f"\n{cor.blue}coloque um novo nome: {cor.white}").lower()
-                            newCpf = int(input(f"{cor.blue}escolha seu nove cpf: {cor.white}"))
-                            if len(str(newCpf)) != 11:
+                        verId = list(data[i].values())[0]
+                        if update == verId:
+                            print(f"{cor.green}novos dados:\n")
+                            info = groupInput("upt")
+                            count = 0
+                            for a in range(len(data)):
+                                if list(data[a].values())[0] == list(info.values())[0]:
+                                    count += 1
+                            if list(data[i].values())[0] == list(info.values())[0]:
+                                count -= 1
+                            if count != 0:
                                 clear()
-                                print(f"{cor.red}cpf inválido: 11 digitos{cor.reset}\n{cor.blue}")
-                                updateInfo()
-                            data[i]["nome"] = newName
-                            data[i]["cpf"] = newCpf
-                            newInfo = data[i]
+                                print(f"{cor.red}esse id ja existe!\n")
+                                call()
+                            data[i] = info
+                            newInfo = data
                             openFile()
-                            data[aba][i] = newInfo
+                            data[aba] = newInfo
                             sendData(data)
                             clear()
-                            print(f"{cor.green}alterado!")
+                            print(f"{cor.green}alterado!\n")
                             call()
                     print(f"\n{cor.red}Esse id não existe")
                 except ValueError:
                     print(f"\n{cor.red}coloque corretamente as informações")
 
             # função para excluir info da lista em json
+            # pede o primeiro id para excluí-lo
             def excludeInfo():
                 try:
                     readFile()
@@ -221,7 +277,7 @@ def selected(selec):
                     openFile()
                     dataRedirect()
                     for i in range(len(data)):
-                        verId = data[i].get("id")
+                        verId = list(data[i].values())[0]
                         if pop == verId:
                             del data[i]
                             newInfo = data
@@ -229,27 +285,25 @@ def selected(selec):
                             data[aba] = newInfo
                             sendData(data)
                             clear()
-                            print(f"\n{cor.green}estudante excluido!")
+                            print(f"\n{cor.green}excluido!")
                             call()
-                    print(f"\n {cor.red}esse estudante não exite") # posso fazer no futuro para escolher a quem dizer que está sendo feito a execução ex: Estudante, Disciplinas
+                    print(f"\n {cor.red}esse id não exite")
                 except ValueError:
                     print(f"{cor.red}escolha um valor válido")
 
+            # função para procurar pelo primeiro id
+            # ele printa de um jeito legal e espaçoso
             def searchInfo():
                 info = input(f"pesquisar por: {cor.white}")
                 openFile()
                 dataRedirect()
                 print("")
                 for i in data:
-                    pid = i["id"]
-                    nome = i["nome"]
-                    cpf = i["cpf"]
-                    conta = 45 - len(i["nome"])
-                    if info in str((pid, nome, cpf)):
-                        cpf = str(cpf)
-                        viewCpf = f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:11]}"
-                        print(f"{cor.yellow}> {pid:<4}{nome}{cor.faint}{non:.>{conta}}{cor.reset}{cor.yellow}{viewCpf}")
-                print("")
+                    for j in i.values():
+                        if info in str(j):
+                            vals = list(i.values())
+                            print(f"{cor.yellow}> ", *[f"{j:<32}" for j in vals])
+                            break
 
             # match case para executar funções acima
             # no futuro posso fazer para mandar um valor para info da área.. ex: 1: estudante 2: disciplina, para verificar em qual array colocar as informações
